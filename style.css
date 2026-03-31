@@ -158,3 +158,116 @@ h1 {
 .board-container::-webkit-scrollbar-thumb:hover {
   background: #F87171;
 }
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(35, 10, 10, 0.45);
+  backdrop-filter: blur(3px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  width: 90%;
+  max-width: 400px;
+  background: linear-gradient(145deg, #fff7f7, #ffeaea);
+  border: 1px solid #f1c2c2;
+  border-radius: 20px;
+  padding: 26px;
+  box-shadow: 0 18px 40px rgba(120, 20, 20, 0.18);
+  animation: modalFade 0.2s ease-out;
+}
+
+@keyframes modalFade {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal h2 {
+  margin: 0 0 18px;
+  color: #8f1f1f;
+  font-size: 1.45rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.modal input,
+.modal textarea {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border: 1px solid #e4b6b6;
+  border-radius: 12px;
+  background: #fff;
+  font-size: 0.95rem;
+  color: #4a1f1f;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.modal input::placeholder,
+.modal textarea::placeholder {
+  color: #b07b7b;
+}
+
+.modal input:focus,
+.modal textarea:focus {
+  outline: none;
+  border-color: #c94d4d;
+  box-shadow: 0 0 0 3px rgba(201, 77, 77, 0.15);
+  background: #fffdfd;
+}
+
+.modal textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.modal-buttons button {
+  flex: 1;
+  padding: 11px 14px;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.modal-buttons button:first-child {
+  background: linear-gradient(135deg, #c63f3f, #a92f2f);
+  color: white;
+  box-shadow: 0 6px 16px rgba(169, 47, 47, 0.25);
+}
+
+.modal-buttons button:first-child:hover {
+  background: linear-gradient(135deg, #b83737, #922727);
+  transform: translateY(-1px);
+}
+
+.modal-buttons button:last-child {
+  background: #f4d9d9;
+  color: #7b2a2a;
+}
+
+.modal-buttons button:last-child:hover {
+  background: #ebc6c6;
+}

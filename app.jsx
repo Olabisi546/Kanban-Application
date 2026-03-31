@@ -37,53 +37,84 @@ const statusCounts = getStatusCounts(boards);
   function deleteBoard(id) {
     setBoards(boards.filter(b => b.id !== id));
   }
+  const [showTaskModal, setShowTaskModal] = useState(false);
+const [editingTask, setEditingTask] = useState(null);
+const [currentBoardId, setCurrentBoardId] = useState(null);
+
+const [taskForm, setTaskForm] = useState({
+  title: "",
+  description: "",
+  dueDate: ""
+});
 
   /* ---- TASK FUNCTIONS ---- */
   function addTask(boardId) {
-    const title = prompt("Task title:");
-    if (!title) return;
+  setEditingTask(null);
+  setCurrentBoardId(boardId);
 
-    const description = prompt("Description:");
-    const dueDate = prompt("Due date (YYYY-MM-DD):");
+  setTaskForm({
+    title: "",
+    description: "",
+    dueDate: ""
+  });
 
+  setShowTaskModal(true);
+}
+
+  function editTask(boardId, taskId) {
+  const board = boards.find(b => b.id === boardId);
+  const task = board.tasks.find(t => t.id === taskId);
+
+  setEditingTask(task);
+  setCurrentBoardId(boardId);
+
+  setTaskForm({
+    title: task.title,
+    description: task.description,
+    dueDate: task.dueDate || ""
+  });
+
+  setShowTaskModal(true);
+}
+function saveTask() {
+  if (!taskForm.title.trim()) return;
+
+  if (editingTask) {
+    setBoards(boards.map(board => {
+      if (board.id !== currentBoardId) return board;
+
+      return {
+        ...board,
+        tasks: board.tasks.map(task =>
+          task.id === editingTask.id
+            ? {
+                ...task,
+                title: taskForm.title,
+                description: taskForm.description,
+                dueDate: taskForm.dueDate
+              }
+            : task
+        )
+      };
+    }));
+  } else {
     const newTask = {
       id: Date.now().toString(),
-      title,
-      description,
-      createdAt: new Date().toLocaleDateString(),
-      dueDate
+      title: taskForm.title,
+      description: taskForm.description,
+      dueDate: taskForm.dueDate,
+      createdAt: new Date().toLocaleDateString()
     };
 
     setBoards(boards.map(board =>
-      board.id === boardId
+      board.id === currentBoardId
         ? { ...board, tasks: [...board.tasks, newTask] }
         : board
     ));
   }
 
-  function editTask(boardId, taskId) {
-    const newTitle = prompt("New title:");
-    const newDesc = prompt("New description:");
-    const newDue = prompt("New due date (YYYY-MM-DD):");
-
-    setBoards(boards.map(b => {
-      if (b.id !== boardId) return b;
-
-      return {
-        ...b,
-        tasks: b.tasks.map(t =>
-          t.id === taskId
-            ? {
-                ...t,
-                title: newTitle || t.title,
-                description: newDesc || t.description,
-                dueDate: newDue || t.dueDate
-              }
-            : t
-        )
-      };
-    }));
-  }
+  setShowTaskModal(false);
+}
 
   function deleteTask(boardId, taskId) {
     setBoards(boards.map(board =>
@@ -201,6 +232,48 @@ function getStatusCounts(boards) {
             onDragStart={handleDragStart}
           />
         ))}
+        {showTaskModal && (
+  <div className="modal-overlay">
+    <div className="modal">
+      <h2>{editingTask ? "Edit Task" : "Add Task"}</h2>
+
+      <input
+        type="text"
+        placeholder="Task Title"
+        value={taskForm.title}
+        onChange={(e) =>
+          setTaskForm({ ...taskForm, title: e.target.value })
+        }
+      />
+
+      <textarea
+        placeholder="Description"
+        value={taskForm.description}
+        onChange={(e) =>
+          setTaskForm({ ...taskForm, description: e.target.value })
+        }
+      />
+
+      <input
+        type="date"
+        value={taskForm.dueDate}
+        onChange={(e) =>
+          setTaskForm({ ...taskForm, dueDate: e.target.value })
+        }
+      />
+
+      <div className="modal-buttons">
+        <button onClick={saveTask}>
+          {editingTask ? "Save Changes" : "Add Task"}
+        </button>
+
+        <button onClick={() => setShowTaskModal(false)}>
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+)}
       </div>
     </div>
   );
